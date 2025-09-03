@@ -8,14 +8,19 @@ on:
 jobs:
   client-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ssh
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js 20
+      - name: Use Node.js 20 (cache with lockfile)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ssh/package-lock.json
 
       - name: Install dependencies
         run: npm ci
