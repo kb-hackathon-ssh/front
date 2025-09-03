@@ -8,10 +8,12 @@ import VoicephishingPage from "@/pages/Voicephishing";
 import ChatbotPage from "@/pages/Chatbot";
 import SettingPage from "@/pages/Setting";
 import DonationPage from "@/pages/Donation";
+import RootLayout from "@/components/Layout";
 
 export const routers = createBrowserRouter([
   {
     path: "",
+    element: <RootLayout />,
     children: [
       {
         path: ROUTING_PATH.home,
