@@ -109,7 +109,7 @@ export default function Footer() {
           <div className="text-sm text-stone-500">
             <p className="mb-4">© 2025 SSH All Rights Reserved.</p>
             <p className="font-medium text-stone-700">(주) 마음 잇는 목소리</p>
-            <p>사업자 등록번호 : 123-45-67890 | 대표 : 성소희</p>
+            <p>사업자 등록번호 : 123-45-67890 | 대표 : 상소회</p>
             <p>
               호스팅 서비스 : (주) 마음 잇는 목소리 | 통신판매업 신고번호 :
               2025-서울중구-00001 사업자정보확인
