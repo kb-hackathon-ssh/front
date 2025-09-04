@@ -71,8 +71,6 @@ button:focus-visible {
   }
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -81,7 +79,9 @@ button:focus-visible {
     --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
-    --primary: 24 9.8% 10%;
+
+    /* --primary: 24 9.8% 10%; */
+
     --primary-foreground: 60 9.1% 97.8%;
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
@@ -100,6 +100,18 @@ button:focus-visible {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --brand: 196 87% 61%;
+    --brand-foreground: 210 40% 98%;
+
+    --success: 144 100% 82%;
+    --success-foreground: 222.2 47.4% 11.2%;
+
+    --warning: 48 100% 94%;
+    --warning-foreground: 31 100% 15%;
+
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -108,7 +120,7 @@ button:focus-visible {
     --card-foreground: 60 9.1% 97.8%;
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 60 9.1% 97.8%;
-    --primary: 60 9.1% 97.8%;
+    /* --primary: 60 9.1% 97.8%; */
     --primary-foreground: 24 9.8% 10%;
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
@@ -126,10 +138,17 @@ button:focus-visible {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --brand: 196 87% 66%;
+    --brand-foreground: 222.2 84% 4.9%;
+    --success: 144 70% 70%;
+    --success-foreground: 222.2 84% 4.9%;
+    --warning: 48 90% 20%;
+    --warning-foreground: 210 40% 98%;
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
   }
 }
-
-
 
 @layer base {
   * {
