@@ -82,8 +82,6 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   return R * c;
 }
 
-const UI = { border: '#e5e7eb', muted: '#6b7280' };
-
 const Container = styled.div`
   position: relative;
   height: 100vh;
@@ -359,7 +357,7 @@ const AtmMapPage = () => {
             safeRelayout(kakaoMapRef.current, selected.lat, selected.lng),
           );
         });
-      } catch (e) {
+      } catch (_) {
         setSdkError('카카오맵 SDK 로드 중 오류가 발생했습니다. (도메인/키/네트워크 확인)');
       }
     };
@@ -435,7 +433,7 @@ const AtmMapPage = () => {
         setUserLat(pos.coords.latitude);
         setUserLng(pos.coords.longitude);
       },
-      (err) => {
+      (_) => {
         setGeoError('위치 정보를 가져올 수 없음');
       },
       { enableHighAccuracy: true, timeout: 8000 },
