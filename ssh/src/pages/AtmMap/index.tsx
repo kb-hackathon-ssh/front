@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const ACCENT = '#A8BFE4';
+const HEADER = 'var(--app-header-h, 64px)';
+const TOP_OFFSET = `calc(${HEADER} + env(safe-area-inset-top, 0px))`;
 
 declare global {
   interface Window {
@@ -84,12 +86,16 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  padding-top: ${TOP_OFFSET};
 `;
 const MapContainer = styled.div`
   position: fixed;
-  inset: 0;
+  top: ${TOP_OFFSET};
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - ${TOP_OFFSET});
   background: #eef2ff;
   z-index: 1;
 `;
@@ -99,6 +105,7 @@ const Panel = styled.div`
   left: 1.25rem;
   bottom: 1.25rem;
   width: 380px;
+  max-height: calc(100vh - ${HEADER} - 2.25rem);
   border-radius: 1rem;
   background: linear-gradient(135deg, rgba(168, 191, 228, 0.28), rgba(255, 255, 255, 0.1));
   backdrop-filter: blur(16px) saturate(125%);
@@ -137,7 +144,7 @@ const SegBar = styled.div`
 
 const SelectBox = styled.select`
   appearance: none;
-  padding: 0.5rem 0.875rem;
+  padding: 0.5rem 2rem 0.5rem 0.875rem; /* extra right padding for caret */
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   background: rgba(255, 255, 255, 0.6);
@@ -152,6 +159,11 @@ const SelectBox = styled.select`
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     color 0.2s ease;
+  background-image: url('data:image/svg+xml;utf8,\
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
   &:focus {
     outline: 2px solid ${ACCENT};
     outline-offset: 2px;
@@ -249,7 +261,7 @@ const Fab = styled.button`
 const ErrSdk = styled.div`
   position: absolute;
   left: 1.25rem;
-  top: 70px;
+  top: 0.75rem;
   background-color: #fee2e2;
   border: 1px solid #fecaca;
   color: #991b1b;
@@ -261,7 +273,7 @@ const ErrSdk = styled.div`
 const ErrGeo = styled.div`
   position: absolute;
   left: 1.25rem;
-  top: 100px;
+  top: 2.5rem;
   background-color: #fef3c7;
   border: 1px solid #fde68a;
   color: #78350f;
@@ -313,6 +325,10 @@ const AtmMapPage = () => {
     let cancelled = false;
     const init = async () => {
       const appKey = getKakaoKey();
+      if (!appKey) {
+        setSdkError('환경변수 VITE_KAKAO_MAP_KEY가 없습니다.');
+        return;
+      }
       try {
         await loadKakaoScript(appKey);
         if (cancelled) return;
