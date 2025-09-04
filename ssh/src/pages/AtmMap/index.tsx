@@ -4,6 +4,9 @@ import styled from 'styled-components';
 const ACCENT = '#A8BFE4';
 const HEADER = 'var(--app-header-h, 64px)';
 const TOP_OFFSET = `calc(${HEADER} + env(safe-area-inset-top, 0px))`;
+const GAP = '1.25rem';
+const FOOTER = 'var(--app-footer-h, 0px)';
+const BOTTOM_OFFSET = `calc(${FOOTER} + env(safe-area-inset-bottom, 0px))`;
 
 declare global {
   interface Window {
@@ -86,26 +89,26 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  padding-top: ${TOP_OFFSET};
 `;
 const MapContainer = styled.div`
   position: fixed;
   top: ${TOP_OFFSET};
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: ${BOTTOM_OFFSET};
   width: 100vw;
-  height: calc(100vh - ${TOP_OFFSET});
+  height: calc(100vh - ${TOP_OFFSET} - ${BOTTOM_OFFSET});
   background: #eef2ff;
   z-index: 1;
 `;
 const Panel = styled.div`
-  position: absolute;
-  top: 1rem;
-  left: 1.25rem;
-  bottom: 1.25rem;
-  width: 380px;
-  max-height: calc(100vh - ${HEADER} - 2.25rem);
+  position: fixed;
+  top: calc(${TOP_OFFSET} + ${GAP});
+  left: ${GAP};
+  bottom: calc(${BOTTOM_OFFSET} + ${GAP});
+
+  width: min(420px, calc(100vw - (${GAP} * 2)));
+
   border-radius: 1rem;
   background: linear-gradient(135deg, rgba(168, 191, 228, 0.28), rgba(255, 255, 255, 0.1));
   backdrop-filter: blur(16px) saturate(125%);
@@ -241,9 +244,9 @@ const ItemFee = styled.div`
   font-size: 12px;
 `;
 const Fab = styled.button`
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
+  position: fixed;
+  right: ${GAP};
+  bottom: calc(${BOTTOM_OFFSET} + ${GAP});
   width: 52px;
   height: 52px;
   border-radius: 9999px;
@@ -259,9 +262,9 @@ const Fab = styled.button`
   line-height: 1;
 `;
 const ErrSdk = styled.div`
-  position: absolute;
-  left: 1.25rem;
-  top: 0.75rem;
+  position: fixed;
+  left: ${GAP};
+  top: calc(${TOP_OFFSET} + 0.75rem);
   background-color: #fee2e2;
   border: 1px solid #fecaca;
   color: #991b1b;
@@ -271,9 +274,9 @@ const ErrSdk = styled.div`
   font-size: 14px;
 `;
 const ErrGeo = styled.div`
-  position: absolute;
-  left: 1.25rem;
-  top: 2.5rem;
+  position: fixed;
+  left: ${GAP};
+  top: calc(${TOP_OFFSET} + 2.5rem);
   background-color: #fef3c7;
   border: 1px solid #fde68a;
   color: #78350f;
@@ -282,6 +285,20 @@ const ErrGeo = styled.div`
   z-index: 40;
   font-size: 14px;
 `;
+
+function safeRelayout(mapInstance: any, lat?: number, lng?: number) {
+  if (!mapInstance || !window.kakao?.maps) return;
+  try {
+    if (typeof mapInstance.relayout === 'function') {
+      mapInstance.relayout();
+    } else {
+      window.kakao.maps.event.trigger(mapInstance, 'resize');
+    }
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      mapInstance.setCenter(new window.kakao.maps.LatLng(lat, lng));
+    }
+  } catch {}
+}
 
 const AtmMapPage = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -338,6 +355,9 @@ const AtmMapPage = () => {
           kakaoMapRef.current = new window.kakao.maps.Map(mapRef.current, { center, level: 5 });
           renderMarkers();
           renderUserCircle();
+          requestAnimationFrame(() =>
+            safeRelayout(kakaoMapRef.current, selected.lat, selected.lng),
+          );
         });
       } catch (e) {
         setSdkError('카카오맵 SDK 로드 중 오류가 발생했습니다. (도메인/키/네트워크 확인)');
@@ -350,10 +370,27 @@ const AtmMapPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!mapRef.current) return;
+    const el = mapRef.current;
+    const onResize = () => {
+      if (!kakaoMapRef.current) return;
+      safeRelayout(kakaoMapRef.current, selected.lat, selected.lng);
+    };
+    const ro = new ResizeObserver(onResize);
+    ro.observe(el);
+    window.addEventListener('resize', onResize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [selected.lat, selected.lng]);
+
+  useEffect(() => {
     if (!window.kakao?.maps || !kakaoMapRef.current) return;
     renderMarkers();
     renderUserCircle();
     kakaoMapRef.current.panTo(new window.kakao.maps.LatLng(selected.lat, selected.lng));
+    safeRelayout(kakaoMapRef.current, selected.lat, selected.lng);
   }, [filteredWithDistance, selected, hasUserLocation, userLat, userLng]);
 
   function renderMarkers() {
