@@ -1,5 +1,13 @@
+import Hero from "./components/firstsection/hero";
+import ServiceCarousel from "./components/secondsection/servicecarousel";
+
 const HomePage = () => {
-  return <h1>홈페이지</h1>;
+  return (
+    <>
+      <Hero />
+      <ServiceCarousel />
+    </>
+  );
 };
 
 export default HomePage;

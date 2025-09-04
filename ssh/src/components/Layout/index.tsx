@@ -6,7 +6,7 @@ export default function RootLayout() {
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-screen-xl px-4 pt-20 pb-6 flex-1">
+      <main className="w-full pt-20">
         <Outlet />
       </main>
       <Footer />
