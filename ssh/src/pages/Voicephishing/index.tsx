@@ -102,8 +102,8 @@ const VoicephishingPage = () => {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={
                       type === 'phone'
-                        ? '의심되는 전화번호를 입력하세요 (예: 010-1234-5678)'
-                        : '의심되는 계좌번호를 입력하세요 (숫자만)'
+                        ? '의심되는 전화번호를 입력하세요'
+                        : '의심되는 계좌번호를 입력하세요'
                     }
                     className="w-full bg-transparent pl-4 py-3 rounded-2xl text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 border-0 caret-emerald-600"
                   />
@@ -114,9 +114,7 @@ const VoicephishingPage = () => {
               id="lookup-helper"
               className="mx-auto mt-2 max-w-4xl px-2 text-center text-xs text-gray-500"
             >
-              {type === 'phone'
-                ? '예: 010-1234-5678 (하이픈 없이도 가능)'
-                : '예: 숫자만 입력하세요'}
+              {type === 'phone' ? '예: 010-1234-5678' : '예: 숫자만 입력하세요'}
             </p>
           </div>
         </div>
