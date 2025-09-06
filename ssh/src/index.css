@@ -8,8 +8,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* color: rgba(255, 255, 255, 0.87);
+  background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -111,6 +111,15 @@ button:focus-visible {
 
     --primary: var(--brand);
     --primary-foreground: var(--brand-foreground);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -145,6 +154,14 @@ button:focus-visible {
     --warning-foreground: 210 40% 98%;
     --primary: var(--brand);
     --primary-foreground: var(--brand-foreground);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -154,5 +171,55 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .chat-topbar {
+    @apply border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60;
+  }
+  .chat-title {
+    @apply text-sm font-semibold;
+  }
+  .chat-subtitle {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .chatbot-bg {
+    @apply bg-primary/10;
+  }
+
+  .btn-ghost-brand {
+    @apply hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background;
+  }
+  .btn-solid-brand {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background;
+  }
+  .btn-outline-brand {
+    @apply border border-primary/30 text-primary hover:bg-primary/10;
+  }
+
+  .qa-card {
+    @apply cursor-pointer border border-border bg-card transition;
+  }
+  .qa-card:hover {
+    @apply border-primary/40 bg-accent/40 text-accent-foreground shadow-sm;
+  }
+  .qa-card:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  .chat-chip {
+    @apply inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary;
+  }
+
+  .sidebar-xl [data-sidebar='header'] {
+    @apply py-4;
+  }
+  .sidebar-xl [data-sidebar='menu-button'] {
+    @apply h-12 px-4 text-base gap-3;
+  }
+  .sidebar-xl [data-sidebar='menu-button'] svg {
+    @apply h-7 w-7;
   }
 }
