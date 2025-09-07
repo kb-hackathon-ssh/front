@@ -1,14 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { ROUTING_PATH } from './path.constants';
 
-import HomePage from '@/pages/Home';
+import HomePage from '@/pages/Home/HomePage';
 import LandingPage from '@/pages/Landing';
 import AtmMapPage from '@/pages/AtmMap';
 import VoicephishingPage from '@/pages/Voicephishing';
 import ChatbotPage from '@/pages/Chatbot';
 import SettingPage from '@/pages/Setting';
 import DonationPage from '@/pages/Donation';
-import RootLayout from '@/components/Layout';
+import RootLayout from '@/components/Layout/RootLayout';
 
 export const routers = createBrowserRouter([
   {
