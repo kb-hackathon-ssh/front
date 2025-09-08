@@ -1,5 +1,5 @@
-import Hero from "./components/firstsection/hero";
-import ServiceCarousel from "./components/secondsection/servicecarousel";
+import Hero from './sections/Hero/Hero';
+import ServiceCarousel from './sections/Features/ServiceCarousel';
 
 const HomePage = () => {
   return (
