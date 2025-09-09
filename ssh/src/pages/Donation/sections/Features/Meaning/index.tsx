@@ -6,10 +6,10 @@ export default function Meaning() {
       <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-8 px-6 py-14 md:grid-cols-2 md:gap-12">
         <img src={donationImage} alt="기부 의미 이미지" className="h-full w-full object-cover" />
         <div className="flex flex-col justify-center">
-          <h2 className="text-xl font-semibold md:text-2xl">
+          <h2 className="text-xl font-semibold md:text-4xl">
             당신의 재산, 뜻깊은 나눔으로 이어집니다
           </h2>
-          <div className="mt-4 space-y-4 leading-7 text-muted-foreground">
+          <div className="mt-4 space-y-4 text-base md:text-xl leading-7 md:leading-8 text-muted-foreground">
             <p>
               삶은 언제 끝날지 알 수 없지만, 그 뜻은 사라지지 않아야 합니다. 평생 모은 재산이 내
               의도와 다르게 흘러가는 대신, 사회에 의미 있게 쓰이길 바라는 마음을 지켜드립니다.
