@@ -1,9 +1,10 @@
+import donationImage from '@/assets/donationImage.png';
+
 export default function Meaning() {
   return (
     <section id="meaning" className="w-full">
       <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-8 px-6 py-14 md:grid-cols-2 md:gap-12">
-        {/* 이미지 교체 예정 */}
-        <div className="aspect-[4/3] w-full rounded-xl bg-muted shadow-sm" aria-hidden />
+        <img src={donationImage} alt="기부 의미 이미지" className="h-full w-full object-cover" />
         <div className="flex flex-col justify-center">
           <h2 className="text-xl font-semibold md:text-2xl">
             당신의 재산, 뜻깊은 나눔으로 이어집니다
