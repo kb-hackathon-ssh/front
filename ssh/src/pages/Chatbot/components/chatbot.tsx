@@ -17,11 +17,11 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import logo2 from '@/assets/logo2.png';
 
 import {
   ArrowLeft,
   Bell,
-  Bot,
   ChevronDown,
   CircleUser,
   Mic,
@@ -84,9 +84,10 @@ export default function Chatbot() {
                       aria-label="사이드바 열기"
                       className="btn-ghost-brand"
                     >
-                      <Bot className="h-5 w-5" />
+                      <img src={logo2} alt="Logo" className="h-5 w-5 object-contain" />
                     </Button>
                   </SheetTrigger>
+
                   <SheetContent side="left" className="p-0 w-[320px]">
                     <AppSidebar className="block sidebar-xl" />
                   </SheetContent>
@@ -139,7 +140,9 @@ export default function Chatbot() {
                 <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-10">
                   <div className="relative mx-auto max-w-3xl rounded-2xl border border-border bg-card p-10 text-center">
                     <div className="mx-auto mb-6 grid h-10 w-10 place-items-center rounded-full bg-primary/10">
-                      <Bot className="h-5 w-5 text-primary" />
+                      <div className="mx-auto mb-6 grid h-10 w-10 place-items-center rounded-full bg-primary/10 overflow-hidden">
+                        <img src={logo2} alt="Logo" className="h-6 w-6 object-contain" />
+                      </div>
                     </div>
 
                     <h2 className="text-lg font-semibold">
