@@ -3,9 +3,6 @@ import { Button } from '@/components/ui/button';
 import { ShieldCheck, Building2, HandCoins, FileSignature, ReceiptText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const REGISTER_PATH = '/donation/register';
-const BANK_LINK_PATH = '/donation/banks';
-
 type Step = {
   title: string;
   desc: string;
@@ -95,10 +92,11 @@ export default function Steps() {
 
               <div className="pt-3 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="rounded-full h-11 px-6 text-xl">
-                  <Link to={REGISTER_PATH}>기부 의사 등록하기</Link>
+                  <Link to="/donation/register">기부 의사 등록하기</Link>
                 </Button>
+
                 <Button asChild variant="ghost" className="rounded-full h-11 px-6 text-xl">
-                  <Link to={BANK_LINK_PATH}>은행 연동 안내</Link>
+                  <Link to="/donation/banks">은행 연동 안내</Link>
                 </Button>
               </div>
             </CardContent>
