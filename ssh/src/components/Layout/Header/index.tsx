@@ -1,13 +1,14 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTING_PATH } from '@/routes/path.constants';
-import { MessageSquare, CircleUserRound } from 'lucide-react';
+import { MessageSquare, CircleUserRound, LogOut } from 'lucide-react';
 import logo from '@/assets/logo1.png';
-
+import { useAuth } from '@/auth/useAuth';
 const toAbs = (seg: string) => (!seg ? '/' : seg.startsWith('/') ? seg : `/${seg}`);
 
 export default function Header() {
   const { pathname } = useLocation();
-
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const NAV = [
     { label: '홈페이지', seg: ROUTING_PATH.home },
     { label: '채팅하기', seg: ROUTING_PATH.chatbot },
@@ -28,6 +29,11 @@ export default function Header() {
     'px-8 py-3 text-lg';
   const activePill = 'bg-primary/10 text-primary ring-1 ring-primary/20';
   const inactivePill = 'text-foreground/70 hover:bg-muted active:bg-muted/80';
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
     <header className="fixed top-0 z-50 w-full bg-background/90 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
@@ -55,18 +61,27 @@ export default function Header() {
               })}
             </nav>
           </div>
+
           <nav className="flex items-center gap-3">
-            <Link
-              to={toAbs(ROUTING_PATH.setting)}
-              aria-current={isActive(ROUTING_PATH.setting) ? 'page' : undefined}
-              className={[
-                basePill,
-                isActive(ROUTING_PATH.setting) ? activePill : inactivePill,
-              ].join(' ')}
-            >
-              <CircleUserRound className="h-5 w-5" />
-              로그인/회원가입
-            </Link>
+            {!user ? (
+              <Link
+                to={toAbs(ROUTING_PATH.login || '/login')}
+                aria-current={isActive(ROUTING_PATH.login || '/login') ? 'page' : undefined}
+                className={[basePill, inactivePill].join(' ')}
+              >
+                <CircleUserRound className="h-5 w-5" />
+                로그인
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className={[basePill, 'bg-red-50 text-red-600 hover:bg-red-100'].join(' ')}
+              >
+                <LogOut className="h-5 w-5" />
+                로그아웃
+              </button>
+            )}
 
             <Link
               to={toAbs(ROUTING_PATH.chatbot)}
