@@ -7,7 +7,7 @@ import AtmMapPage from '@/pages/AtmMap';
 import VoicephishingPage from '@/pages/Voicephishing';
 import ChatbotPage from '@/pages/Chatbot';
 import SettingPage from '@/pages/Setting';
-import DonationPage from '@/pages/Donation';
+import DonationPage from '@/pages/Donation/DonationPage';
 import RootLayout from '@/components/Layout/RootLayout';
 
 export const routers = createBrowserRouter([
