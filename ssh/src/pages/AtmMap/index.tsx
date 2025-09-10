@@ -8,41 +8,23 @@ const GAP = '1.25rem';
 const FOOTER = 'var(--app-footer-h, 0px)';
 const BOTTOM_OFFSET = `calc(${FOOTER} + env(safe-area-inset-bottom, 0px))`;
 
+const SEARCH_HERE_THRESHOLD_KM = 0.05;
+
 declare global {
   interface Window {
     kakao: any;
   }
 }
-
-const ATMS = [
-  {
-    id: 'atm-1',
-    brand: 'KB국민은행',
-    name: '아미고_삼성중앙역점',
-    address: '서울 강남구 봉은사로 471',
-    lat: 37.51064,
-    lng: 127.0583,
-    fee: 0,
-  },
-  {
-    id: 'atm-2',
-    brand: 'KB국민은행',
-    name: '대명텔레콤_코엑스몰점',
-    address: '서울 강남구 영동대로 513',
-    lat: 37.5113,
-    lng: 127.0589,
-    fee: 1100,
-  },
-  {
-    id: 'atm-3',
-    brand: 'KB국민은행',
-    name: '예당 논현점',
-    address: '서울 강남구 학동로 331',
-    lat: 37.5139,
-    lng: 127.0335,
-    fee: 0,
-  },
-];
+type Atm = {
+  id: string;
+  brand: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  type: 'ATM' | 'BRANCH' | 'OTHER';
+};
+type Bounds = { swLat: number; swLng: number; neLat: number; neLng: number };
 
 function loadKakaoScript(appKey: string, libraries: string[] = ['services']) {
   return new Promise<void>((resolve, reject) => {
@@ -65,11 +47,6 @@ function loadKakaoScript(appKey: string, libraries: string[] = ['services']) {
 }
 
 const BRANDS = ['전체', 'KB국민은행'];
-const FEE_CHIPS: { label: string; value: 'all' | 'free' | 'paid' }[] = [
-  { label: '전체', value: 'all' },
-  { label: '무료', value: 'free' },
-  { label: '유료', value: 'paid' },
-];
 
 function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371;
@@ -80,6 +57,22 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+function buildUserMarkerDataUrl() {
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+    <defs>
+      <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000000" flood-opacity="0.25"/>
+      </filter>
+    </defs>
+    <g filter="url(#shadow)">
+      <circle cx="18" cy="18" r="10" fill="#ffffff"/>
+      <path d="M18 10.2a3.3 3.3 0 1 1 0 6.6a3.3 3.3 0 0 1 0-6.6zm-5.3 11.8c0-2.6 2.4-4.3 5.3-4.3s5.3 1.7 5.3 4.3v2.4H12.7V22z" fill="${ACCENT}"/>
+    </g>
+  </svg>`;
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
 }
 
 const Container = styled.div`
@@ -228,18 +221,36 @@ const ListItem = styled.li<{ $selected: boolean }>`
     outline-offset: 2px;
   }
 `;
-const ItemTitle = styled.div`
+const ItemTitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-weight: 700;
   font-size: 15px;
   margin-bottom: 4px;
+`;
+const ItemName = styled.span`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ItemTypePill = styled.span`
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: ${ACCENT};
+  color: #fff;
 `;
 const ItemAddress = styled.div`
   font-size: 12px;
   color: rgba(17, 24, 39, 0.7);
   margin-bottom: 6px;
-`;
-const ItemFee = styled.div`
-  font-size: 12px;
 `;
 const Fab = styled.button`
   position: fixed;
@@ -258,6 +269,22 @@ const Fab = styled.button`
   z-index: 25;
   font-size: 22px;
   line-height: 1;
+`;
+
+const SearchHereBtn = styled.button`
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(${TOP_OFFSET} + 8px);
+  z-index: 30;
+  padding: 0.5rem 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
 `;
 const ErrSdk = styled.div`
   position: fixed;
@@ -302,12 +329,33 @@ const AtmMapPage = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const kakaoMapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const userCircleRef = useRef<any | null>(null);
+  const userMarkerRef = useRef<any | null>(null);
 
   const [brand, setBrand] = useState('전체');
-  const [feeFilter, setFeeFilter] = useState<'all' | 'free' | 'paid'>('all');
   const [q, setQ] = useState('');
+
+  const [placeFilter, setPlaceFilter] = useState<'all' | 'branch' | 'atm'>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [items, setItems] = useState<Atm[]>([]);
+
+  const [center, setCenter] = useState<{ lat: number; lng: number }>({
+    lat: 37.51064,
+    lng: 127.0583,
+  });
+
+  const [viewCenter, setViewCenter] = useState<{ lat: number; lng: number }>({
+    lat: 37.51064,
+    lng: 127.0583,
+  });
+  const [bounds, setBounds] = useState<Bounds | null>(null);
+  const [ready, setReady] = useState(false);
+
+  const [dirty, setDirty] = useState<boolean>(false);
+
+  const abortRef = useRef<AbortController | null>(null);
+
+  const idleTimerRef = useRef<number | undefined>(undefined);
+  const safeItems = useMemo<Atm[]>(() => (Array.isArray(items) ? items : []), [items]);
 
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLng, setUserLng] = useState<number | null>(null);
@@ -318,23 +366,105 @@ const AtmMapPage = () => {
 
   const getKakaoKey = () => (import.meta as any).env?.VITE_KAKAO_MAP_KEY as string | undefined;
 
+  const isAtmPlace = (a: Atm) => {
+    if (a.type === 'ATM') return true;
+    if (a.type === 'BRANCH') return false;
+    const hay = `${a.name} ${a.address}`.toLowerCase();
+    return /atm|무인|자동화|현금|cd|지급기/.test(hay);
+  };
+  const isBranchPlace = (a: Atm) => {
+    if (a.type === 'BRANCH') return true;
+    if (a.type === 'ATM') return false;
+    const hay = `${a.name} ${a.address}`.toLowerCase();
+    return /(지점|영업점|은행)/.test(hay) && !/atm|무인|자동화|현금|cd|지급기/.test(hay);
+  };
   const filteredWithDistance = useMemo(() => {
-    const base = ATMS.filter((a) => {
+    const base = safeItems.filter((a) => {
       const matchBrand = brand === '전체' ? true : a.brand === brand;
-      const matchFee = feeFilter === 'all' ? true : feeFilter === 'free' ? a.fee === 0 : a.fee > 0;
       const matchQ = q ? `${a.name} ${a.address}`.toLowerCase().includes(q.toLowerCase()) : true;
-      return matchBrand && matchFee && matchQ;
+      const matchPlace =
+        placeFilter === 'all' ? true : placeFilter === 'atm' ? isAtmPlace(a) : isBranchPlace(a);
+      return matchBrand && matchQ && matchPlace;
     });
     if (!hasUserLocation) return base.map((a) => ({ ...a, distanceKm: null as number | null }));
     return base
       .map((a) => ({ ...a, distanceKm: getDistanceKm(userLat!, userLng!, a.lat, a.lng) }))
       .sort((x, y) => x.distanceKm! - y.distanceKm!);
-  }, [brand, feeFilter, q, userLat, userLng, hasUserLocation]);
+  }, [brand, placeFilter, q, userLat, userLng, hasUserLocation, safeItems]);
 
   const selected = useMemo(() => {
     const found = filteredWithDistance.find((a) => a.id === selectedId);
     return found || filteredWithDistance[0] || { lat: 37.51064, lng: 127.0583 };
   }, [filteredWithDistance, selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    if (typeof selected.lat === 'number' && typeof selected.lng === 'number') {
+      setCenter({ lat: selected.lat, lng: selected.lng });
+      setDirty(false);
+      setViewCenter({ lat: selected.lat, lng: selected.lng });
+    }
+  }, [selectedId, selected.lat, selected.lng]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const params = new URLSearchParams({
+      lat: String(center.lat),
+      lng: String(center.lng),
+      brand,
+      q,
+    });
+    if (bounds) {
+      params.set('swLat', String(bounds.swLat));
+      params.set('swLng', String(bounds.swLng));
+      params.set('neLat', String(bounds.neLat));
+      params.set('neLng', String(bounds.neLng));
+    } else {
+      params.set('radius', '1500');
+    }
+    const url = `/api/atms/nearby?${params.toString()}`;
+
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const ac = new AbortController();
+    abortRef.current = ac;
+
+    fetch(url, { signal: ac.signal, headers: { Accept: 'application/json' } })
+      .then(async (r) => {
+        const ct = r.headers.get('content-type') || '';
+        if (!r.ok) {
+          const text = await r.text().catch(() => '');
+          throw new Error(`HTTP ${r.status} ${r.statusText} | ${text.slice(0, 160)}`);
+        }
+        if (!ct.includes('application/json')) {
+          const text = await r.text().catch(() => '');
+          throw new Error(`Unexpected content-type: ${ct}. First 160 chars: ${text.slice(0, 160)}`);
+        }
+        return r.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setItems(data as Atm[]);
+        } else {
+          console.error('ATM API returned non-array payload:', data);
+          setItems([]);
+        }
+      })
+      .catch((e: any) => {
+        if (e?.name === 'AbortError') return;
+        console.error('ATM fetch failed:', e);
+      })
+      .finally(() => {
+        if (abortRef.current === ac) {
+          abortRef.current = null;
+        }
+      });
+
+    return () => {
+      ac.abort();
+    };
+  }, [ready, center.lat, center.lng, brand, q, bounds]);
 
   useEffect(() => {
     let cancelled = false;
@@ -351,8 +481,11 @@ const AtmMapPage = () => {
           if (cancelled || !mapRef.current) return;
           const center = new window.kakao.maps.LatLng(selected.lat, selected.lng);
           kakaoMapRef.current = new window.kakao.maps.Map(mapRef.current, { center, level: 5 });
+          const b0 = captureBounds();
+          if (b0) setBounds(b0);
+          setReady(true);
           renderMarkers();
-          renderUserCircle();
+          renderUserMarker();
           requestAnimationFrame(() =>
             safeRelayout(kakaoMapRef.current, selected.lat, selected.lng),
           );
@@ -368,11 +501,35 @@ const AtmMapPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!window.kakao?.maps || !kakaoMapRef.current) return;
+
+    const onIdle = () => {
+      if (idleTimerRef.current) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = window.setTimeout(() => {
+        const c = kakaoMapRef.current!.getCenter();
+        const next = { lat: c.getLat(), lng: c.getLng() };
+        setViewCenter(next);
+        const movedKm = getDistanceKm(center.lat, center.lng, next.lat, next.lng);
+        setDirty(movedKm >= SEARCH_HERE_THRESHOLD_KM);
+      }, 250);
+    };
+
+    window.kakao.maps.event.addListener(kakaoMapRef.current, 'idle', onIdle);
+    return () => {
+      window.kakao.maps.event.removeListener(kakaoMapRef.current!, 'idle', onIdle);
+    };
+  }, [center.lat, center.lng, kakaoMapRef.current]);
+
+  useEffect(() => {
+    setDirty(false);
+  }, [center.lat, center.lng]);
+
+  useEffect(() => {
     if (!mapRef.current) return;
     const el = mapRef.current;
     const onResize = () => {
       if (!kakaoMapRef.current) return;
-      safeRelayout(kakaoMapRef.current, selected.lat, selected.lng);
+      safeRelayout(kakaoMapRef.current);
     };
     const ro = new ResizeObserver(onResize);
     ro.observe(el);
@@ -386,9 +543,11 @@ const AtmMapPage = () => {
   useEffect(() => {
     if (!window.kakao?.maps || !kakaoMapRef.current) return;
     renderMarkers();
-    renderUserCircle();
-    kakaoMapRef.current.panTo(new window.kakao.maps.LatLng(selected.lat, selected.lng));
-    safeRelayout(kakaoMapRef.current, selected.lat, selected.lng);
+    renderUserMarker();
+    if (selectedId) {
+      kakaoMapRef.current.panTo(new window.kakao.maps.LatLng(selected.lat, selected.lng));
+    }
+    safeRelayout(kakaoMapRef.current);
   }, [filteredWithDistance, selected, hasUserLocation, userLat, userLng]);
 
   function renderMarkers() {
@@ -403,25 +562,49 @@ const AtmMapPage = () => {
     });
   }
 
-  function renderUserCircle() {
+  function renderUserMarker() {
     if (!window.kakao?.maps || !kakaoMapRef.current) return;
-    if (userCircleRef.current) userCircleRef.current.setMap(null);
-    if (hasUserLocation) {
-      const centerUser = new window.kakao.maps.LatLng(userLat!, userLng!);
-      userCircleRef.current = new window.kakao.maps.Circle({
-        center: centerUser,
-        radius: 120,
-        strokeWeight: 3,
-        strokeColor: ACCENT,
-        strokeOpacity: 0.9,
-        strokeStyle: 'shortdash',
-        fillColor: ACCENT,
-        fillOpacity: 0.15,
-      });
-      userCircleRef.current.setMap(kakaoMapRef.current);
+
+    if (!hasUserLocation) {
+      if (userMarkerRef.current) {
+        userMarkerRef.current.setMap(null);
+        userMarkerRef.current = null;
+      }
+      return;
+    }
+
+    const pos = new window.kakao.maps.LatLng(userLat!, userLng!);
+    if (userMarkerRef.current) {
+      userMarkerRef.current.setPosition(pos);
+      userMarkerRef.current.setMap(kakaoMapRef.current);
+      return;
+    }
+
+    const imgSrc = buildUserMarkerDataUrl();
+    const size = new window.kakao.maps.Size(36, 36);
+    const offset = new window.kakao.maps.Point(18, 32);
+    const markerImage = new window.kakao.maps.MarkerImage(imgSrc, size, { offset });
+
+    const marker = new window.kakao.maps.Marker({
+      position: pos,
+      image: markerImage,
+      zIndex: 999,
+      clickable: false,
+    });
+    marker.setMap(kakaoMapRef.current);
+    userMarkerRef.current = marker;
+  }
+  function captureBounds(): Bounds | null {
+    if (!window.kakao?.maps || !kakaoMapRef.current) return null;
+    try {
+      const b = kakaoMapRef.current.getBounds();
+      const sw = b.getSouthWest();
+      const ne = b.getNorthEast();
+      return { swLat: sw.getLat(), swLng: sw.getLng(), neLat: ne.getLat(), neLng: ne.getLng() };
+    } catch {
+      return null;
     }
   }
-
   const requestUserLocation = () => {
     setGeoError(null);
     if (!navigator.geolocation) {
@@ -449,9 +632,20 @@ const AtmMapPage = () => {
     kakaoMapRef.current.panTo(new window.kakao.maps.LatLng(userLat!, userLng!));
   };
 
+  const handleSearchHere = () => {
+    const b = captureBounds();
+    if (b) setBounds(b);
+    setCenter({ lat: viewCenter.lat, lng: viewCenter.lng });
+  };
+
   return (
     <Container>
       <MapContainer ref={mapRef} />
+      {dirty && (
+        <SearchHereBtn type="button" onClick={handleSearchHere} aria-label="이 지역 검색하기">
+          이 지역 검색하기
+        </SearchHereBtn>
+      )}
       <Panel>
         <PanelHeader>
           <SearchInput
@@ -475,12 +669,16 @@ const AtmMapPage = () => {
               </SelectBox>
             </FilterRow>
             <FilterRow>
-              <SegBar role="group" aria-label="수수료 필터">
-                {FEE_CHIPS.map((c) => (
+              <SegBar role="group" aria-label="유형 필터">
+                {[
+                  { label: '전체', value: 'all' },
+                  { label: '지점', value: 'branch' },
+                  { label: 'ATM', value: 'atm' },
+                ].map((c) => (
                   <SegButton
                     key={c.value}
-                    $active={feeFilter === c.value}
-                    onClick={() => setFeeFilter(c.value)}
+                    $active={placeFilter === c.value}
+                    onClick={() => setPlaceFilter(c.value as 'all' | 'branch' | 'atm')}
                   >
                     {c.label}
                   </SegButton>
@@ -499,11 +697,13 @@ const AtmMapPage = () => {
                 role="button"
                 tabIndex={0}
               >
-                <ItemTitle>{a.name}</ItemTitle>
+                <ItemTitleRow>
+                  <ItemName>{a.name}</ItemName>
+                  <ItemTypePill>
+                    {a.type === 'ATM' ? 'ATM' : a.type === 'BRANCH' ? '지점' : '기타'}
+                  </ItemTypePill>
+                </ItemTitleRow>
                 <ItemAddress>{a.address}</ItemAddress>
-                <ItemFee>
-                  {a.fee === 0 ? '수수료 무료' : `수수료 ${a.fee.toLocaleString()}원`}
-                </ItemFee>
               </ListItem>
             ))}
           </ListGrid>
