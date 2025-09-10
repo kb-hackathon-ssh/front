@@ -40,29 +40,31 @@ const VoicephishingPage = () => {
     <main className="w-full bg-white">
       <section className="relative isolate h-[500px] md:h-[560px] w-full">
         <img
-          src="/images/voicephishing-bg.jpg"
+          src="src/assets/voicephishing-bg.png"
           alt="보이스피싱 배경"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/30 to-black/50" />
 
-        <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-4 text-center text-white">
-          <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs tracking-tight backdrop-blur-sm">
+        <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-start px-4 text-center text-white pt-10 md:pt-16">
+          <span className="mb-10 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm md:text-base tracking-tight backdrop-blur-sm">
             <ShieldAlert className="h-4 w-4" />
             안전한 금융생활을 위한 신고·조회 허브
           </span>
-          <h1 className="text-4xl font-extrabold leading-tight md:text-[42px]">
+
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
             의심 번호 조회 서비스
           </h1>
-          <p className="mt-3 max-w-2xl text-sm md:text-base text-white/85">
+
+          <p className="mt-8 max-w-2xl text-base md:text-lg text-white/85">
             보이스피싱이 의심되는 전화번호 혹은 계좌번호를 조회해
             <br className="hidden md:block" />
             관련 신고 및 접수 횟수를 바로 확인하세요.
           </p>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 w-full px-4">
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 w-full px-4">
           <div className="flex flex-col items-center">
             <div className="pointer-events-auto relative mx-auto max-w-3xl w-full rounded-3xl bg-white/90 shadow-2xl backdrop-blur-xl ring-1 ring-black/5">
               <div className="flex items-stretch w-full">
@@ -80,7 +82,7 @@ const VoicephishingPage = () => {
                       type="button"
                       aria-pressed={type === 'account'}
                       onClick={() => setType('account')}
-                      className={`px-3 py-1.5 text-sm rounded-full ${type === 'account' ? 'bg-white shadow text-emerald-700' : 'text-gray-600 hover:text-gray-800'}`}
+                      className={`px-4 py-2 text-sm rounded-full ${type === 'account' ? 'bg-white shadow text-emerald-700' : 'text-gray-600 hover:text-gray-800'}`}
                     >
                       계좌번호
                     </button>
@@ -105,14 +107,14 @@ const VoicephishingPage = () => {
                         ? '의심되는 전화번호를 입력하세요'
                         : '의심되는 계좌번호를 입력하세요'
                     }
-                    className="w-full bg-transparent pl-4 py-3 rounded-2xl text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 border-0 caret-emerald-600"
+                    className="w-full bg-transparent pl-5 py-4 rounded-2xl text-lg text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0 border-0 caret-emerald-600"
                   />
                 </form>
               </div>
             </div>
             <p
               id="lookup-helper"
-              className="mx-auto mt-2 max-w-4xl px-2 text-center text-xs text-gray-500"
+              className="mx-auto mt-2 max-w-4xl px-2 text-center text-base text-white"
             >
               {type === 'phone' ? '예: 010-1234-5678' : '예: 숫자만 입력하세요'}
             </p>
@@ -142,7 +144,7 @@ const VoicephishingPage = () => {
               <li key={r.id} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-lg text-gray-500">
                       {r.type === 'phone' ? '전화번호' : '계좌번호'}
                     </div>
                     <div className="text-base font-semibold text-gray-900">{r.value}</div>

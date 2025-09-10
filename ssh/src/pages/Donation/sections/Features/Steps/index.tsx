@@ -3,10 +3,6 @@ import { Button } from '@/components/ui/button';
 import { ShieldCheck, Building2, HandCoins, FileSignature, ReceiptText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// 추후 추가 페이지 생성
-const REGISTER_PATH = '/donation/register';
-const BANK_LINK_PATH = '/donation/banks';
-
 type Step = {
   title: string;
   desc: string;
@@ -44,28 +40,30 @@ const STEPS: Step[] = [
 export default function Steps() {
   return (
     <section id="steps" aria-labelledby="steps-title" className="w-full">
-      <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-10 px-6 py-14 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-12 px-6 py-20 lg:grid-cols-2">
         <div>
-          <h3 id="steps-title" className="text-xl font-semibold md:text-2xl">
+          <h3 id="steps-title" className="text-2xl font-semibold md:text-4xl">
             기부 신청 방법 (단계별 안내)
           </h3>
 
-          <ol role="list" className="mt-8 space-y-8">
+          <ol role="list" className="mt-10 space-y-10">
             {STEPS.map((s, idx) => {
               const Icon = s.icon;
               return (
                 <li key={s.title} className="relative">
-                  <div className="absolute left-3 top-6 bottom-0 w-px bg-border" aria-hidden />
-                  <span className="absolute left-0 top-0 grid h-6 w-6 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  <div className="absolute left-4 top-8 bottom-0 w-[2px] bg-border" aria-hidden />
+                  <span className="absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-full bg-primary text-center text-lg font-bold text-primary-foreground">
                     {idx + 1}
                   </span>
 
-                  <div className="pl-10">
-                    <div className="flex items-start gap-3">
-                      <Icon className="mt-0.5 h-5 w-5 text-primary" aria-hidden />
+                  <div className="pl-12">
+                    <div className="flex items-start gap-4">
+                      <Icon className="mt-1 h-6 w-6 md:h-7 md:w-7 text-primary" aria-hidden />
                       <div>
-                        <h4 className="text-base font-medium">{s.title}</h4>
-                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{s.desc}</p>
+                        <h4 className="text-lg md:text-3xl font-semibold">{s.title}</h4>
+                        <p className="mt-2 text-base md:text-xl leading-8 text-muted-foreground">
+                          {s.desc}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -76,11 +74,11 @@ export default function Steps() {
         </div>
 
         <div className="flex">
-          <Card className="my-auto w-full rounded-xl shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base md:text-lg">신청하기</CardTitle>
+          <Card className="my-auto w-full rounded-2xl shadow-md p-8 md:p-12 min-h-[320px]">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl md:text-3xl">신청하기</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground md:text-base">
+            <CardContent className="space-y-4 text-base leading-8 text-muted-foreground md:text-xl">
               <p>
                 등록 내용은 생전 언제든 <b className="text-foreground">수정·철회</b>할 수 있습니다.
               </p>
@@ -92,12 +90,13 @@ export default function Steps() {
                 처리됩니다.
               </p>
 
-              <div className="pt-2 flex flex-col gap-3 sm:flex-row">
-                <Button asChild className="rounded-full">
-                  <Link to={REGISTER_PATH}>기부 의사 등록하기</Link>
+              <div className="pt-3 flex flex-col gap-3 sm:flex-row">
+                <Button asChild className="rounded-full h-11 px-6 text-xl">
+                  <Link to="/donation/register">기부 의사 등록하기</Link>
                 </Button>
-                <Button asChild variant="ghost" className="rounded-full">
-                  <Link to={BANK_LINK_PATH}>은행 연동 안내</Link>
+
+                <Button asChild variant="ghost" className="rounded-full h-11 px-6 text-xl">
+                  <Link to="/donation/banks">은행 연동 안내</Link>
                 </Button>
               </div>
             </CardContent>

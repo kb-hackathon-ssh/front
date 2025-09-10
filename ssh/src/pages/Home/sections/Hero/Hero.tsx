@@ -1,8 +1,10 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { ROUTING_PATH } from '@/routes/path.constants';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
-    <section className="relative isolate w-full bg-background pb-16">
+    <section className="relative isolate w-full bg-background pb-20">
       <div
         aria-hidden
         className="
@@ -16,32 +18,33 @@ export default function Hero() {
       <div className="relative z-10 mx-auto w-full max-w-screen-lg px-6">
         <div className="h-[50vw] flex flex-col items-center justify-center text-center gap-4 sm:gap-6 md:gap-8">
           <h1 className="text-4xl font-extrabold sm:text-2xl md:text-6xl">
-            <span className="block">대화로 이어지는 당신의 금융 동반자</span>
-            <span className="block mt-4">마음잇는 목소리</span>
+            <span className="block">대화로 이어지는 금융 동반자</span>
+            <span className="block mt-5">마음 잇는 목소리</span>
           </h1>
 
           <p className="text-base text-muted-foreground sm:text-lg">
-            우리 사이트 한줄 소개
+            저희 서비스는 어르신을 비롯한 디지털 금융 취약계층을 위한<br></br>
+            디지털 금융 동반자입니다
           </p>
 
           <Waveform className="h-28 w-full max-auto" />
 
-          <h2 className="text-2xl font-semibold sm:text-3xl">
-            지금 바로 사용해보세요
-          </h2>
+          <h2 className="text-2xl font-semibold sm:text-3xl">지금 바로 이용해보세요</h2>
 
           <div className="flex flex-wrap items-center justify-center gap-5">
             <Button
+              asChild
               size="lg"
               className="rounded-full px-20 py-8 text-2xl shadow-md hover:shadow-lg"
             >
-              시작하기
+              <Link to={ROUTING_PATH.setting}>시작하기</Link>
             </Button>
 
             <Button
               size="lg"
               variant="secondary"
               className="rounded-full px-20 py-8 text-2xl shadow-md hover:shadow-lg"
+              onClick={() => scrollDown(600)}
             >
               더 알아보기
             </Button>
@@ -51,11 +54,13 @@ export default function Hero() {
     </section>
   );
 }
+const scrollDown = (offset: number) => {
+  const targetY = window.scrollY + offset;
+  window.scrollTo({ top: targetY, behavior: 'smooth' });
+};
 
-function Waveform({ className = "" }: { className?: string }) {
-  const base = [
-    60, 96, 78, 64, 72, 66, 56, 82, 60, 82, 56, 66, 72, 64, 78, 96, 60,
-  ];
+function Waveform({ className = '' }: { className?: string }) {
+  const base = [60, 96, 78, 64, 72, 66, 56, 82, 60, 82, 56, 66, 72, 64, 78, 96, 60];
   const scale = 1.4;
   const mid = 60;
   const vbH = 120;
@@ -69,7 +74,7 @@ function Waveform({ className = "" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 520 120"
-      className={className + " drop-shadow-[0_6px_12px_rgba(2,132,199,0.20)]"}
+      className={className + ' drop-shadow-[0_6px_12px_rgba(2,132,199,0.20)]'}
       role="img"
       aria-label="음성 파형"
       preserveAspectRatio="xMidYMid meet"

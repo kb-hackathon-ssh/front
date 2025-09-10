@@ -11,8 +11,8 @@ import {
 } from '@/components/ui/sidebar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, MessageSquare, History, Users, Settings, PanelLeftClose } from 'lucide-react';
-
+import { MessageSquare, History, Users, Settings, PanelLeftClose } from 'lucide-react';
+import logo2 from '@/assets/logo2.png';
 export default function AppSidebar({
   className = '',
   onClose,
@@ -25,8 +25,11 @@ export default function AppSidebar({
       <SidebarHeader className="bg-background">
         <div className="flex items-center justify-between px-2 py-1.5">
           <div className="flex items-center gap-2">
-            <div className="grid h-7 w-7 place-items-center rounded-full bg-primary/10">
-              <Bot className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <div className="grid h-7 w-7 place-items-center rounded-full bg-primary/10 overflow-hidden">
+                <img src={logo2} alt="Logo" className="h-5 w-5 object-contain" />
+              </div>
+              <span className="font-semibold">마음 채팅</span>
             </div>
             <span className="font-semibold">마음 채팅</span>
           </div>
