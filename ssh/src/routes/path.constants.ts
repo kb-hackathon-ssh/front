@@ -1,6 +1,7 @@
 export const ROUTING_PATH = {
   home: '/',
-  landing: 'landing',
+  login: 'login',
+  signup: 'signup',
   chatbot: 'chatbot',
   voicephishing: 'voicephishing',
   donation: 'donation',
