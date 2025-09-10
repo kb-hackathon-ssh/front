@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTING_PATH } from '@/routes/path.constants';
 import { MessageSquare, CircleUserRound } from 'lucide-react';
+import logo from '@/assets/logo1.png';
 
 const toAbs = (seg: string) => (!seg ? '/' : seg.startsWith('/') ? seg : `/${seg}`);
 
@@ -30,25 +31,30 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 z-50 w-full bg-background/90 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-      <div className="mx-auto w-full max-w-screen-xl px-8 py-4">
+      <div className="mx-auto w-full max-w-screen-2xl px-6 py-4">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <nav className="flex flex-wrap items-center gap-3">
-            {NAV.map((item) => {
-              const href = toAbs(item.seg);
-              const active = isActive(item.seg);
-              return (
-                <Link
-                  key={item.label}
-                  to={href}
-                  aria-current={active ? 'page' : undefined}
-                  className={[basePill, active ? activePill : inactivePill].join(' ')}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <div className="flex items-center gap-20">
+            <Link to={ROUTING_PATH.home} className="shrink-0">
+              <img src={logo} alt="Logo" className="h-10 w-auto object-contain" />
+            </Link>
 
+            <nav className="flex flex-nowrap items-center gap-2">
+              {NAV.map((item) => {
+                const href = toAbs(item.seg);
+                const active = isActive(item.seg);
+                return (
+                  <Link
+                    key={item.label}
+                    to={href}
+                    aria-current={active ? 'page' : undefined}
+                    className={[basePill, active ? activePill : inactivePill].join(' ')}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
           <nav className="flex items-center gap-3">
             <Link
               to={toAbs(ROUTING_PATH.setting)}
