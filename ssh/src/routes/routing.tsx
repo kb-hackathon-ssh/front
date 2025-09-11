@@ -26,12 +26,13 @@ export const routers = createBrowserRouter([
       { path: ROUTING_PATH.atmmap, element: <AtmMapPage /> },
       { path: ROUTING_PATH.voicephishing, element: <VoicephishingPage /> },
       { path: ROUTING_PATH.donation, element: <DonationPage /> },
+      { path: `${ROUTING_PATH.donation}/register`, element: <RegisterPage /> },
 
       {
         element: <ProtectedRoute />,
         children: [
           { path: ROUTING_PATH.setting, element: <SettingPage /> },
-          { path: `${ROUTING_PATH.donation}/register`, element: <RegisterPage /> },
+          // { path: `${ROUTING_PATH.donation}/register`, element: <RegisterPage /> },
           { path: `${ROUTING_PATH.donation}/banks`, element: <BankLinkPage /> },
         ],
       },
