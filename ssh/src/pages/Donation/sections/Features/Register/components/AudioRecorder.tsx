@@ -121,7 +121,7 @@ export default function AudioRecorder({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">
-          음성 메모(최대 {Math.floor(maxSeconds / 60)}분) — 출력: WAV 16kHz 모노
+          음성 녹음(최대 {Math.floor(maxSeconds / 60)}분)
         </span>
         {!isRecording ? (
           <Button type="button" className="h-9 px-4" onClick={start}>

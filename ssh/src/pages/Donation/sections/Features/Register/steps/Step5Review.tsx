@@ -73,7 +73,7 @@ export default function Step5Review({
         </div>
 
         <div className="mt-2 space-y-3 rounded-xl border p-5">
-          <div className="mb-2 text-xl font-semibold">음성 메모(선택)</div>
+          <div className="mb-2 text-xl font-semibold">음성 녹음</div>
           <AudioRecorder onChange={setVoiceNote} maxSeconds={120} />
           {voiceNote && (
             <p className="text-sm text-muted-foreground">
