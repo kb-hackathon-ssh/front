@@ -196,3 +196,65 @@ body {
     @apply h-7 w-7;
   }
 }
+
+/* ===== Kakao-like chat bubbles ===== */
+.kakao-bubble {
+  position: relative;
+  max-width: min(78%, 640px);
+  word-break: break-word;
+}
+
+.kakao-bubble.user {
+  background: #a8bfe4; /* 카카오 노랑 */
+  color: #111827; /* text-gray-900 */
+}
+
+.kakao-bubble.assistant {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid hsl(0 0% 90% / 1);
+}
+
+/* 꼬리 (좌) */
+.kakao-bubble.assistant.tail::after {
+  content: '';
+  position: absolute;
+  left: -6px; /* 좌측 밖으로 */
+  bottom: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent #ffffff transparent transparent;
+  filter: drop-shadow(0 0 0 hsl(0 0% 90% / 1)); /* 경계선 자연스러움 */
+}
+
+/* 꼬리 (우) */
+.kakao-bubble.user.tail::after {
+  content: '';
+  position: absolute;
+  right: -6px; /* 우측 밖으로 */
+  bottom: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent #a8bfe4;
+}
+
+/* 연속 말풍선은 모서리/꼬리 처리 */
+.kakao-bubble.stack-top {
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+}
+.kakao-bubble.stack-mid {
+  border-radius: 0.5rem !important;
+}
+.kakao-bubble.stack-bottom {
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+/* 시간 뱃지 */
+.kakao-time {
+  font-size: 12px;
+  line-height: 1;
+  color: hsl(215 16% 47% / 1); /* text-muted-foreground 느낌 */
+  white-space: nowrap;
+}
