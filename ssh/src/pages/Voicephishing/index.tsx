@@ -1,22 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Phone, CreditCard, ShieldAlert } from 'lucide-react';
 
-// index.tsx 상단 util 추가
 const onlyDigits = (v: string) => v.replace(/\D/g, '');
 
 const normalizeForType = (value: string, type: 'phone' | 'account') => {
   const digits = onlyDigits(value);
-  if (type === 'phone') return digits; // 010xxxxxxxx 형태
-  return digits; // 계좌도 숫자만
+  if (type === 'phone') return digits;
+  return digits;
 };
 
 const isValid = (value: string, type: 'phone' | 'account') => {
   const digits = onlyDigits(value);
   if (type === 'phone') {
-    // 010/011/016/017/018/019 + 7~8자리
     return /^01[016789]\d{7,8}$/.test(digits);
   }
-  // 계좌는 은행별 길이가 달라 느슨히 최소 8자리 이상으로 체크
   return /^\d{8,20}$/.test(digits);
 };
 
@@ -64,8 +61,7 @@ const VoicephishingPage = () => {
         const data = await res.json();
         let list: any[] = [];
         if (Array.isArray(data)) list = data;
-        else if (Array.isArray((data as any)?.data?.items))
-          list = (data as any).data.items; // ✅ support nested items
+        else if (Array.isArray((data as any)?.data?.items)) list = (data as any).data.items;
         else if (Array.isArray((data as any)?.data)) list = (data as any).data;
         else if (Array.isArray((data as any)?.content)) list = (data as any).content;
         else if (Array.isArray((data as any)?.items)) list = (data as any).items;
@@ -87,14 +83,13 @@ const VoicephishingPage = () => {
     };
 
     load();
-    const t = setInterval(load, 15000); // 15초마다 갱신
+    const t = setInterval(load, 15000);
     return () => {
       aborted = true;
       clearInterval(t);
     };
   }, []);
 
-  // 타입 전환 시 입력 및 상태 초기화
   const switchType = useCallback((next: 'phone' | 'account') => {
     setType(next);
     setInput('');
@@ -122,7 +117,6 @@ const VoicephishingPage = () => {
           throw new Error(text || '신고에 실패했습니다. 다시 시도해 주세요.');
         }
         setNotice('신고가 접수되었습니다. 감사합니다.');
-        // 신고 접수 후, 최근 신고 목록을 즉시 갱신
         try {
           const recentRes = await fetch('/api/reports/recent');
           if (recentRes.ok && recentRes.status !== 204) {
@@ -178,22 +172,17 @@ const VoicephishingPage = () => {
     fetch(`/api/lookup?type=${type}&q=${encodeURIComponent(q)}`)
       .then(async (res) => {
         if (!res.ok) {
-          // 백엔드가 400과 함께 메시지를 주면 노출
           const text = await res.text().catch(() => '');
           throw new Error(text || '조회에 실패했습니다. 다시 시도해 주세요.');
         }
         const data = await res.json();
         let list: any[] = [];
         if (Array.isArray(data)) list = data;
-        else if (Array.isArray((data as any)?.data?.items))
-          list = (data as any).data.items; // ✅ support nested items in { data: { items: [...] } }
-        else if (Array.isArray((data as any)?.data))
-          list = (data as any).data; // e.g., { data: [...] }
-        else if (Array.isArray((data as any)?.content))
-          list = (data as any).content; // e.g., Spring Page
+        else if (Array.isArray((data as any)?.data?.items)) list = (data as any).data.items;
+        else if (Array.isArray((data as any)?.data)) list = (data as any).data;
+        else if (Array.isArray((data as any)?.content)) list = (data as any).content;
         else if (Array.isArray((data as any)?.items)) list = (data as any).items;
-        else if (data && typeof data === 'object')
-          list = [data]; // single object -> wrap
+        else if (data && typeof data === 'object') list = [data];
         else list = [];
 
         const mappedResults = list.map((item: any) => ({
@@ -449,7 +438,6 @@ const RecentReportsCard = ({
 }) => {
   const [index, setIndex] = useState(0);
 
-  // 보고서 목록이 변경되면 인덱스 보정
   useEffect(() => {
     if (index >= reports.length) setIndex(0);
   }, [reports, index]);
