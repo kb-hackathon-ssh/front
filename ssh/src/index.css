@@ -8,8 +8,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* color: rgba(255, 255, 255, 0.87);
+  background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,34 +28,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
@@ -66,12 +41,7 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
 }
-
-
 
 @layer base {
   :root {
@@ -81,7 +51,9 @@ button:focus-visible {
     --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
-    --primary: 24 9.8% 10%;
+
+    /* --primary: 24 9.8% 10%; */
+
     --primary-foreground: 60 9.1% 97.8%;
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
@@ -100,6 +72,27 @@ button:focus-visible {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --brand: 196 87% 61%;
+    --brand-foreground: 210 40% 98%;
+
+    --success: 144 100% 82%;
+    --success-foreground: 222.2 47.4% 11.2%;
+
+    --warning: 48 100% 94%;
+    --warning-foreground: 31 100% 15%;
+
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -108,7 +101,6 @@ button:focus-visible {
     --card-foreground: 60 9.1% 97.8%;
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 60 9.1% 97.8%;
-    --primary: 60 9.1% 97.8%;
     --primary-foreground: 24 9.8% 10%;
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
@@ -126,10 +118,25 @@ button:focus-visible {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --brand: 196 87% 66%;
+    --brand-foreground: 222.2 84% 4.9%;
+    --success: 144 70% 70%;
+    --success-foreground: 222.2 84% 4.9%;
+    --warning: 48 90% 20%;
+    --warning-foreground: 210 40% 98%;
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-
-
 
 @layer base {
   * {
@@ -138,4 +145,116 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer components {
+  .chat-topbar {
+    @apply border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60;
+  }
+  .chat-title {
+    @apply text-sm font-semibold;
+  }
+  .chat-subtitle {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .chatbot-bg {
+    @apply bg-primary/10;
+  }
+
+  .btn-ghost-brand {
+    @apply hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background;
+  }
+  .btn-solid-brand {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background;
+  }
+  .btn-outline-brand {
+    @apply border border-primary/30 text-primary hover:bg-primary/10;
+  }
+
+  .qa-card {
+    @apply cursor-pointer border border-border bg-card transition;
+  }
+  .qa-card:hover {
+    @apply border-primary/40 bg-accent/40 text-accent-foreground shadow-sm;
+  }
+  .qa-card:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  .chat-chip {
+    @apply inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary;
+  }
+
+  .sidebar-xl [data-sidebar='header'] {
+    @apply py-4;
+  }
+  .sidebar-xl [data-sidebar='menu-button'] {
+    @apply h-12 px-4 text-base gap-3;
+  }
+  .sidebar-xl [data-sidebar='menu-button'] svg {
+    @apply h-7 w-7;
+  }
+}
+
+/* ===== Kakao-like chat bubbles ===== */
+.kakao-bubble {
+  position: relative;
+  max-width: min(78%, 640px);
+  word-break: break-word;
+}
+
+.kakao-bubble.user {
+  background: #a8bfe4; /* 카카오 노랑 */
+  color: #111827; /* text-gray-900 */
+}
+
+.kakao-bubble.assistant {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid hsl(0 0% 90% / 1);
+}
+
+/* 꼬리 (좌) */
+.kakao-bubble.assistant.tail::after {
+  content: '';
+  position: absolute;
+  left: -6px; /* 좌측 밖으로 */
+  bottom: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent #ffffff transparent transparent;
+  filter: drop-shadow(0 0 0 hsl(0 0% 90% / 1)); /* 경계선 자연스러움 */
+}
+
+/* 꼬리 (우) */
+.kakao-bubble.user.tail::after {
+  content: '';
+  position: absolute;
+  right: -6px; /* 우측 밖으로 */
+  bottom: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent #a8bfe4;
+}
+
+/* 연속 말풍선은 모서리/꼬리 처리 */
+.kakao-bubble.stack-top {
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+}
+.kakao-bubble.stack-mid {
+  border-radius: 0.5rem !important;
+}
+.kakao-bubble.stack-bottom {
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+/* 시간 뱃지 */
+.kakao-time {
+  font-size: 12px;
+  line-height: 1;
+  color: hsl(215 16% 47% / 1); /* text-muted-foreground 느낌 */
+  white-space: nowrap;
 }
