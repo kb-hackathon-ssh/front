@@ -48,9 +48,16 @@ export default function Header() {
               {NAV.map((item) => {
                 const href = toAbs(item.seg);
                 const active = isActive(item.seg);
+
+                // ✅ 라벨/seg에 따라 id 부여 (HIGHLIGHT_ELEMENT에서 사용할 고정 셀렉터)
+                let id: string | undefined;
+                if (item.seg === ROUTING_PATH.atmmap) id = 'header-atm-button';
+                if (item.seg === ROUTING_PATH.voicephishing) id = 'header-phishing-button';
+
                 return (
                   <Link
                     key={item.label}
+                    id={id} // ✅ 여기!
                     to={href}
                     aria-current={active ? 'page' : undefined}
                     className={[basePill, active ? activePill : inactivePill].join(' ')}
