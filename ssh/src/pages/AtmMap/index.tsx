@@ -713,7 +713,7 @@ const AtmMapPage = () => {
         type="button"
         onClick={flyToUser}
         aria-label={hasUserLocation ? '내 위치로 이동' : '내 위치 사용하기'}
-        title={hasUserLocation ? '내 위치로 이동' : '내 위치 사용하기'}
+        title={hasUserLocation ? '위치로 이동' : '위치 사용하기'}
       >
         📍
       </Fab>
